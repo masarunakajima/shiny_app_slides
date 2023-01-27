@@ -12,88 +12,75 @@ output: ioslides_presentation
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
+library(plotly)
 ```
 
 
-## My new slide
+## US Geographic Visualization App
 
-Some content
-
-*** 
-A slide without a title
-
-
-## Title
-
-### Bullet point
-- item 2
-- item 2
-
-### Numbered items
-1. point 1
-2. point 2
+### Description
+This `shiny` application shows geographic information of US states using `plotly`. 
+The user specify the type of geographical information, and the application 
+shows the US map with heat map indicating the level of the geographical 
+parameter such as population. The user can also specify the color gradient for 
+the heat map.
 
 
-## Formatting
+## Geographical parameters
 
-Plain 
-
-*italiciczed*
-
-**Bold**
-
-`for (i %in% : 10)`
-
-
-
-## Some code
-
-```{r}
-head(mtcars)
-```
-
-## codes
-
-```{r, comment="", echo=TRUE, eval=FALSE}
-head(mtcars)
-```
+- Population 
+- Income
+- Illiteracy
+- Life expectation
+- Murder
+- High School Graduation
+- Frost
+- Area
 
 
-## Plot
+## Example 1
 
-```{r, echo=FALSE, fig.align="center", fig.cap="my figure"}
-library(ggplot2)
-p <- ggplot(mtcars, aes(x=wt, y=mpg))+geom_point()+
-  labs(x="Weight", y= "MPG", title="MPG vs weight")
-p
+```{r, echo=FALSE}
+    library(plotly)
+    state_df <- data.frame(state.x77)
+    state_df$state <- state.abb
+    param <- "Population"
+    state_df$hover <- with(state_df, paste(state, '<br>', param, ":", param))
+    borders <- list(color=toRGB("red"))
+    gradation <- "Blues"
+
+    map_options <- list(scope='usa', projection = list(type='albers usa'),
+                        showlakes=TRUE, lakecolor=toRGB('white'))
+
+    plot_ly(state_df, z=~Population, text=~hover, locations=~state,
+            type='choropleth', locationmode='USA-states',
+            color=~Population, colors = gradation, marker=list(line=borders)) %>%
+      colorbar(title = param) %>%
+      layout(title=paste('US ', param, ' in 1975'), geo=map_options)
 ```
 
 
 
+## Example 2
 
+```{r, echo=FALSE}
+    library(plotly)
+    state_df <- data.frame(state.x77)
+    state_df$state <- state.abb
+    param <- "Income"
+    state_df$hover <- with(state_df, paste(state, '<br>', param, ":", param))
+    borders <- list(color=toRGB("red"))
+    gradation <- "Greys"
 
+    map_options <- list(scope='usa', projection = list(type='albers usa'),
+                        showlakes=TRUE, lakecolor=toRGB('white'))
 
-## R Markdown
-
-This is an R Markdown presentation. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document.
-
-## Slide with Bullets
-
-- Bullet 1
-- Bullet 2
-- Bullet 3
-
-## Slide with R Output
-
-```{r cars, echo = TRUE}
-summary(cars)
+    plot_ly(state_df, z=~Income, text=~hover, locations=~state,
+            type='choropleth', locationmode='USA-states',
+            color=~Income, colors = gradation, marker=list(line=borders)) %>%
+      colorbar(title = param) %>%
+      layout(title=paste('US ', param, ' in 1975'), geo=map_options)
 ```
 
-## Slide with Plot
 
-```{r pressure}
-plot(pressure)
-```
 
